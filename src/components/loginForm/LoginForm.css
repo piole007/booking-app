@@ -1,7 +1,9 @@
-input.email, input.password {
-    @apply w-full border my-1 py-2 px-3 rounded-2xl;
+input.email,
+input.password,
+input.name {
+  @apply w-full border my-1 py-2 px-3 rounded-2xl;
 }
 
 button.login {
-    @apply bg-primary p-2 w-full text-white  rounded-2xl
+  @apply bg-primary p-2 w-full text-white  rounded-2xl;
 }
