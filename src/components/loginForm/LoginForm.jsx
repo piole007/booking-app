@@ -14,13 +14,16 @@ const LoginForm = ({
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
 
+  function registerUser (){
+
+  }
+
   return (
     <div className="mb-64">
       <h1 className="text-4xl text-center mb-4">{title}</h1>
-      <form className="max-w-md mx-auto">
+      <form className="max-w-md mx-auto" onSubmit={registerUser}>
         
         {/* Render the name input only if showNameInput is true */}
-
         {showNameInput && (
           <input
             className="name"
