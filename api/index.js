@@ -5,14 +5,14 @@ const bcrypt = require("bcryptjs");
 const { default: mongoose } = require("mongoose");
 const UserModel = require("./models/User");
 const jwt = require("jsonwebtoken");
-// const cookieParser = require("cookie-parser")
+const cookieParser = require("cookie-parser")
 
 const app = new express();
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = 'randomStringHere'
 
 app.use(express.json());
-// app.use(cookieParser())
+app.use(cookieParser())
 app.use(
   cors({
     credentials: true,
@@ -45,8 +45,8 @@ router.post("/login", async (req, res) => {
     const rightPassword = bcrypt.compareSync(password, UserDoc.password);
     if (rightPassword) {
       jwt.sign({ email: UserDoc.email, id: UserDoc._id }, jwtSecret, {}, (err, token) => {
-        if (err) throw err;
-        res.cookie('token', token).json(UserDoc)
+        if (err) { throw err; } else { res.cookie('token', token).json(UserDoc); }
+
       })
     } else {
       res.status(422).json("pass not ok");
@@ -57,8 +57,9 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/profile", (req, res) => {
-  // const { token } = req.cookie;
-  res.json('works')
+  const { token } = req.cookies;
+  res.json({ token })
+  // console.log({ token })
 })
 
 router.get("/test", (req, res) => {
