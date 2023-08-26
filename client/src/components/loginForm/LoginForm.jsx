@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import { useContext, useState } from "react";
 import "./LoginForm.css";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { UserContext } from "../userContext/UserContext";
 
 const LoginForm = ({
   questionText,
@@ -14,6 +15,8 @@ const LoginForm = ({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [redirect, setRedirect] = useState(false);
+  const {setUser} = useContext(UserContext);
 
   async function registerUser(ev) {
     ev.preventDefault();
@@ -21,20 +24,45 @@ const LoginForm = ({
       await axios.post("/register", {
         name,
         email,
-        password
+        password,
       });
     } catch (error) {
-      alert('Registration failed. Please try again later')
+      alert("Registration failed. Please try again later");
     }
-    
-
-    alert('Registration successful. Now you can log in')
+    alert("Registration successful. Now you can log in");
   }
+
+  async function loginUser(ev) {
+    ev.preventDefault();
+    try {
+      const {data} = await axios.post(
+        "/login",
+        { email, password },
+        { withCredentials: true }
+      );
+      setUser(data)
+      alert("Login successful");
+      setRedirect(true);
+    } catch (error) {
+      alert("Login failed");
+    }
+  }
+
+  if (redirect) {
+    return <Navigate to={"/"} />;
+  }
+
+  // const getOnSubmit = () => {
+  //   showNameInput ? registerUser : null
+  // };
 
   return (
     <div className="mb-64">
       <h1 className="text-4xl text-center mb-4">{title}</h1>
-      <form className="max-w-md mx-auto" onSubmit={registerUser}>
+      <form
+        className="max-w-md mx-auto"
+        onSubmit={showNameInput ? registerUser : loginUser}
+      >
         {/* Render the name input only if showNameInput is true */}
         {showNameInput && (
           <input

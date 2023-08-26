@@ -1,49 +1,91 @@
 const express = require("express");
-const cors = require('cors');
-require('dotenv').config()
-const bcrypt = require('bcryptjs')
+const cors = require("cors");
+require("dotenv").config();
+const bcrypt = require("bcryptjs");
 const { default: mongoose } = require("mongoose");
 const UserModel = require("./models/User");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser")
 
 const app = new express();
 const bcryptSalt = bcrypt.genSaltSync(10);
+const jwtSecret = 'randomStringHere'
 
-app.use(express.json())
-app.use(cors({
-  credentials: true,
-  origin: 'http://localhost:3000'
-}))
+app.use(express.json());
+app.use(cookieParser())
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:3000",
+  })
+);
 
-mongoose.connect(process.env.MONGO_URL)
+mongoose.connect(process.env.MONGO_URL);
 
-var router = express.Router()
+var router = express.Router();
 
-router.get('/test', (req, res) => {
-  res.json('test ok')
-})
-
-router.post('/register', async (req, res) => {
+router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
   try {
     const newUser = await UserModel.create({
-      name, 
+      name,
       email,
       password: bcrypt.hashSync(password, bcryptSalt),
-    })
-    res.json({ newUser })
+    });
+    res.json({ newUser });
   } catch (error) {
-    res.status(422).json(error)
+    res.status(422).json(error);
   }
-  
+});
+
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  const UserDoc = await UserModel.findOne({ email });
+  if (UserDoc) {
+    const rightPassword = bcrypt.compareSync(password, UserDoc.password);
+    if (rightPassword) {
+      jwt.sign({
+        email: UserDoc.email,
+        id: UserDoc._id,
+      },
+        jwtSecret, {},
+        (err, token) => {
+          if (err) throw err;
+          res.cookie('token', token).json(UserDoc);
+        });
+    } else {
+      res.status(422).json("pass not ok");
+    }
+  } else {
+    res.json("Not found");
+  }
+});
+
+router.get("/profile", async (req, res) => {
+  const { token } = req.cookies;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, user) => {
+      if (err) throw err;
+      const {name, email, id} = await UserModel.findById(user.id);
+      res.json({name, email, id})
+    })
+  } else {
+    res.json(null);
+  }
+
 })
 
-router.get('*', (req, res) => {
-  console.log('response was sent to the browser');
-  res.send("You accessed the node server")
-})
+router.get("/test", (req, res) => {
+  res.json("test ok");
+});
 
-app.use(router)
+router.get("*", (req, res) => {
+  console.log("response was sent to the browser");
+  res.send("You accessed the node server");
+});
+
+app.use(router);
 
 app.listen(4000, function () {
-  console.log('Server is up on http://localhost:4000');
+  console.log("Server is up on http://localhost:4000");
 });
