@@ -44,10 +44,15 @@ router.post("/login", async (req, res) => {
   if (UserDoc) {
     const rightPassword = bcrypt.compareSync(password, UserDoc.password);
     if (rightPassword) {
-      jwt.sign({ email: UserDoc.email, id: UserDoc._id }, jwtSecret, {}, (err, token) => {
-        if (err) { throw err; } else { res.cookie('token', token).json(UserDoc); }
-
-      })
+      jwt.sign({
+        email: UserDoc.email,
+        id: UserDoc._id,
+      },
+        jwtSecret, {},
+        (err, token) => {
+          if (err) throw err;
+          res.cookie('token', token).json(UserDoc);
+        });
     } else {
       res.status(422).json("pass not ok");
     }
@@ -56,10 +61,18 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/profile", (req, res) => {
+router.get("/profile", async (req, res) => {
   const { token } = req.cookies;
-  res.json({ token })
-  // console.log({ token })
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, user) => {
+      if (err) throw err;
+      const {name, email, id} = await UserModel.findById(user.id);
+      res.json({name, email, id})
+    })
+  } else {
+    res.json(null);
+  }
+
 })
 
 router.get("/test", (req, res) => {
