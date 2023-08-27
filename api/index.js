@@ -75,6 +75,10 @@ router.get("/profile", async (req, res) => {
 
 })
 
+router.get('/logout', (req, res) => {
+  res.clearCookie('token').json(true);
+})
+
 router.get("/test", (req, res) => {
   res.json("test ok");
 });
