@@ -7,7 +7,10 @@ const Header = () => {
   return (
     <div>
       <header className="flex justify-between">
-        <a href="" className="flex items-center gap-1">
+        <a
+          href="https://www.booking-app.com"
+          className="flex items-center gap-1"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
