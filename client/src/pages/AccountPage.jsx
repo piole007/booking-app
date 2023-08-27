@@ -1,24 +1,10 @@
-import { Navigate, redirect } from "react-router-dom";
-import PlacesPage from "./PlacesPage";
-
-export default function AccountPage() {
-  // And the rest of code for users Account
-
-  if (redirect) {
-    return <Navigate to={redirect} />;
-  }
+import Account from "../components/account/Account";
+const AccountPage = () => {
   return (
     <div>
-      {subpage === "profile" && (
-        <div className="text-center max-w-lg mx-auto">
-          Logged in as {user.name} ({user.email}) <br />
-          <button
-            onClick={logout}
-            className="primary max-w-sm mx-auto"
-          ></button>
-        </div>
-      )}
-      {subpage === "places" && <PlacesPage />}
+      <Account />
     </div>
   );
-}
+};
+
+export default AccountPage;

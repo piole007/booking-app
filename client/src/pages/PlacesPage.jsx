@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function PlacesPage() {
+const PlacesPage = () => {
   return (
     <div>
       <div className="text-center">
@@ -28,4 +28,5 @@ export default function PlacesPage() {
       my places
     </div>
   );
-}
+};
+export default PlacesPage;

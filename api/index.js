@@ -5,14 +5,14 @@ const bcrypt = require("bcryptjs");
 const { default: mongoose } = require("mongoose");
 const UserModel = require("./models/User");
 const jwt = require("jsonwebtoken");
-const cookieParser = require("cookie-parser")
+const cookieParser = require("cookie-parser");
 
 const app = new express();
 const bcryptSalt = bcrypt.genSaltSync(10);
-const jwtSecret = 'randomStringHere'
+const jwtSecret = "randomStringHere";
 
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
@@ -44,15 +44,18 @@ router.post("/login", async (req, res) => {
   if (UserDoc) {
     const rightPassword = bcrypt.compareSync(password, UserDoc.password);
     if (rightPassword) {
-      jwt.sign({
-        email: UserDoc.email,
-        id: UserDoc._id,
-      },
-        jwtSecret, {},
+      jwt.sign(
+        {
+          email: UserDoc.email,
+          id: UserDoc._id,
+        },
+        jwtSecret,
+        {},
         (err, token) => {
           if (err) throw err;
-          res.cookie('token', token).json(UserDoc);
-        });
+          res.cookie("token", token).json(UserDoc);
+        }
+      );
     } else {
       res.status(422).json("pass not ok");
     }
@@ -66,14 +69,17 @@ router.get("/profile", async (req, res) => {
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, user) => {
       if (err) throw err;
-      const {name, email, id} = await UserModel.findById(user.id);
-      res.json({name, email, id})
-    })
+      const { name, email, id } = await UserModel.findById(user.id);
+      res.json({ name, email, id });
+    });
   } else {
     res.json(null);
   }
+});
 
-})
+router.get("/logout", (req, res) => {
+  res.clearCookie("token").json(true);
+});
 
 router.get("/test", (req, res) => {
   res.json("test ok");

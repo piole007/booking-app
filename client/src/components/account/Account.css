@@ -1,0 +1,3 @@
+button.logout {
+  @apply bg-primary p-2 max-w-md text-white rounded-2xl mt-4;
+}
