@@ -98,9 +98,9 @@ app.post("/upload-by-link", async (req, res) => {
   const newName = Date.now() + ".jpg";
   await imageDownloader.image({
     url: link,
-    dest: __dirname + "/uploads" + newName,
+    dest: __dirname + "/uploads/" + newName,
   });
-  res.json(__dirname + "/uploads" + newName);
+  res.json(__dirname + "/uploads/" + newName);
 });
 
 app.listen(4000, function () {
