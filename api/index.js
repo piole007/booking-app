@@ -9,6 +9,7 @@ const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
 const multer = require("multer")
 const fs = require('fs')
+const Place = require('./models/Place')
 
 const app = new express();
 const bcryptSalt = bcrypt.genSaltSync(10);
@@ -118,9 +119,38 @@ app.post("/upload", photosMiddleware.array('photos', 100), (req, res) => {
     const ext = parts[parts.length - 1]
     const newPath = path + '.' + ext;
     fs.renameSync(path, newPath)
-    uploadedFiles.push(newPath.replace('uploads\\','')) //this part can be different for you, it can be uploads/, don't know why it's like this for me
+    uploadedFiles.push(newPath.replace('uploads\\', '')) //this part can be different for you, it can be uploads/, don't know why it's like this for me
   }
   res.json(uploadedFiles)
+})
+
+router.post("/places", (req, res) => {
+  const { token } = req.cookies;
+  const { title,
+    address,
+    description,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+    addedPhotos } = req.body
+  jwt.verify(token, jwtSecret, {}, async (err, user) => {
+    if (err) throw err;
+    const placeDoc = await Place.create({
+      owner: user.id,
+      title,
+      address,
+      description,
+      perks,
+      extraInfo,
+      checkIn,
+      checkOut,
+      maxGuests,
+      addedPhotos
+    })
+    res.json(placeDoc)
+  })
 })
 
 app.use(router);
