@@ -7,7 +7,3 @@ input.name {
 .error {
   @apply w-full text-xs text-primary;
 }
-
-button.login {
-  @apply bg-primary p-2 m-2 w-full text-white  rounded-2xl;
-}
