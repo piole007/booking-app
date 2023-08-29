@@ -16,7 +16,7 @@ const LoginForm = ({
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [redirect, setRedirect] = useState(false);
-  const {setUser} = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
 
   async function registerUser(ev) {
     ev.preventDefault();
@@ -35,12 +35,12 @@ const LoginForm = ({
   async function loginUser(ev) {
     ev.preventDefault();
     try {
-      const {data} = await axios.post(
+      const { data } = await axios.post(
         "/login",
         { email, password },
         { withCredentials: true }
       );
-      setUser(data)
+      setUser(data);
       alert("Login successful");
       setRedirect(true);
     } catch (error) {

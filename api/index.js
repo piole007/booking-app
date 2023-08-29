@@ -59,7 +59,9 @@ router.post("/login", async (req, res) => {
         (err, token) => {
           if (err) throw err;
           res.cookie("token", token).json(UserDoc);
+          console.log(UserDoc);
         }
+
       );
     } else {
       res.status(422).json("pass not ok");
@@ -69,7 +71,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/profile", async (req, res) => {
+router.post("/profile", async (req, res) => {
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, user) => {
