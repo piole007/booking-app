@@ -4,6 +4,7 @@ import { useState } from "react";
 import "./PlacesForm.css";
 import PhotosUploader from "../photosUploader/PhotosUploader";
 import axios from "axios";
+import UserPlaces from "../userPlaces/UserPlaces"
 
 const PlacesForm = () => {
   const [title, setTitle] = useState("");
@@ -48,7 +49,7 @@ const PlacesForm = () => {
       },
       { withCredentials: true }
     );
-    setRedirect("/account/places");
+    setRedirect("/account");
   };
 
   if (redirect) {
@@ -59,6 +60,7 @@ const PlacesForm = () => {
     <div>
       {action !== "new" && (
         <div className="text-center">
+          <UserPlaces/>
           <Link
             className="inline-flex gap-1 bg-primary text-white py-2 px-6 rounded-full"
             to={"/account/places/new"}
