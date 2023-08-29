@@ -7,6 +7,9 @@ const UserModel = require("./models/User");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
+const multer = require("multer")
+const fs = require('fs')
+const Place = require('./models/Place')
 
 const app = new express();
 const bcryptSalt = bcrypt.genSaltSync(10);
@@ -14,6 +17,7 @@ const jwtSecret = "randomStringHere";
 
 app.use(express.json());
 app.use(cookieParser());
+app.use('/uploads', express.static(__dirname + '/uploads'))
 app.use(
   cors({
     credentials: true,
@@ -55,7 +59,9 @@ router.post("/login", async (req, res) => {
         (err, token) => {
           if (err) throw err;
           res.cookie("token", token).json(UserDoc);
+          console.log(UserDoc);
         }
+
       );
     } else {
       res.status(422).json("pass not ok");
@@ -65,7 +71,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/profile", async (req, res) => {
+router.post("/profile", async (req, res) => {
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, user) => {
@@ -82,6 +88,10 @@ router.get("/logout", (req, res) => {
   res.clearCookie("token").json(true);
 });
 
+router.get('/logout', (req, res) => {
+  res.clearCookie('token').json(true);
+})
+
 router.get("/test", (req, res) => {
   res.json("test ok");
 });
@@ -90,8 +100,6 @@ router.get("*", (req, res) => {
   console.log("response was sent to the browser");
   res.send("You accessed the node server");
 });
-
-app.use(router);
 
 app.post("/upload-by-link", async (req, res) => {
   const { link } = req.body;
@@ -102,6 +110,52 @@ app.post("/upload-by-link", async (req, res) => {
   });
   res.json(newName);
 });
+
+const photosMiddleware = multer({ dest: 'uploads/' })
+app.post("/upload", photosMiddleware.array('photos', 100), (req, res) => {
+  const uploadedFiles = []
+  for (let i = 0; i < req.files.length; i++) {
+    const { path, originalname } = req.files[i];
+    console.log(path);
+    const parts = originalname.split('.')
+    const ext = parts[parts.length - 1]
+    const newPath = path + '.' + ext;
+    fs.renameSync(path, newPath)
+    uploadedFiles.push(newPath.replace('uploads\\', '')) //this part can be different for you, it can be uploads/, don't know why it's like this for me
+  }
+  res.json(uploadedFiles)
+})
+
+router.post("/places", (req, res) => {
+  const { token } = req.cookies;
+  const { title,
+    address,
+    description,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+    addedPhotos } = req.body
+  jwt.verify(token, jwtSecret, {}, async (err, user) => {
+    if (err) throw err;
+    const placeDoc = await Place.create({
+      owner: user.id,
+      title,
+      address,
+      description,
+      perks,
+      extraInfo,
+      checkIn,
+      checkOut,
+      maxGuests,
+      addedPhotos
+    })
+    res.json(placeDoc)
+  })
+})
+
+app.use(router);
 
 app.listen(4000, function () {
   console.log("Server is up on http://localhost:4000");
