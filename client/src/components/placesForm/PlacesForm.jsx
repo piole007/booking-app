@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import Perks from "../perks/Perks";
 import axios from "axios";
+import "./PlacesForm.css";
 
 const PlacesForm = () => {
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
   const [photoLink, setPhotoLink] = useState("");
+  const [addedPhotos, setAddedPhotos] = useState([]);
   const [description, setDescription] = useState("");
   const [perks, setPerks] = useState([]);
   const [extraInfo, setExtraInfo] = useState("");
@@ -27,11 +29,17 @@ const PlacesForm = () => {
 
   const addPhotoByLink = async (ev) => {
     ev.preventDefault();
-    await axios.post(
+
+    const response = await axios.post(
       "/upload-by-link",
       { link: photoLink },
       { withCredentials: true }
     );
+    if (response.data) {
+      setAddedPhotos((prev) => {
+        return [...prev, filename];
+      });
+    }
   };
 
   return (
