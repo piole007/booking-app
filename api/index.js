@@ -7,9 +7,9 @@ const UserModel = require("./models/User");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
-const multer = require("multer")
-const fs = require('fs')
-const Place = require('./models/Place')
+const multer = require("multer");
+const fs = require("fs");
+const Place = require("./models/Place");
 
 const app = new express();
 const bcryptSalt = bcrypt.genSaltSync(10);
@@ -17,7 +17,7 @@ const jwtSecret = "randomStringHere";
 
 app.use(express.json());
 app.use(cookieParser());
-app.use('/uploads', express.static(__dirname + '/uploads'))
+app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(
   cors({
     credentials: true,
@@ -61,7 +61,6 @@ router.post("/login", async (req, res) => {
           res.cookie("token", token).json(UserDoc);
           console.log(UserDoc);
         }
-
       );
     } else {
       res.status(422).json("pass not ok");
@@ -88,9 +87,9 @@ router.get("/logout", (req, res) => {
   res.clearCookie("token").json(true);
 });
 
-router.get('/logout', (req, res) => {
-  res.clearCookie('token').json(true);
-})
+router.get("/logout", (req, res) => {
+  res.clearCookie("token").json(true);
+});
 
 router.get("/test", (req, res) => {
   res.json("test ok");
@@ -111,49 +110,30 @@ app.post("/upload-by-link", async (req, res) => {
   res.json(newName);
 });
 
-const photosMiddleware = multer({ dest: 'uploads/' })
-app.post("/upload", photosMiddleware.array('photos', 100), (req, res) => {
-  const uploadedFiles = []
+const photosMiddleware = multer({ dest: "uploads/" });
+app.post("/upload", photosMiddleware.array("photos", 100), (req, res) => {
+  const uploadedFiles = [];
   for (let i = 0; i < req.files.length; i++) {
     const { path, originalname } = req.files[i];
     console.log(path);
-    const parts = originalname.split('.')
-    const ext = parts[parts.length - 1]
-    const newPath = path + '.' + ext;
-    fs.renameSync(path, newPath)
-    uploadedFiles.push(newPath.replace('uploads\\', '')) //this part can be different for you, it can be uploads/, don't know why it's like this for me
+    const parts = originalname.split(".");
+    const ext = parts[parts.length - 1];
+    const newPath = path + "." + ext;
+    fs.renameSync(path, newPath);
+    uploadedFiles.push(newPath.replace("uploads\\", "")); //this part can be different for you, it can be uploads/, don't know why it's like this for me
   }
-  res.json(uploadedFiles)
-})
+  res.json(uploadedFiles);
+});
 
-router.post("/places", (req, res) => {
-  const { token } = req.cookies;
-  const { title,
-    address,
-    description,
-    perks,
-    extraInfo,
-    checkIn,
-    checkOut,
-    maxGuests,
-    addedPhotos } = req.body
-  jwt.verify(token, jwtSecret, {}, async (err, user) => {
-    if (err) throw err;
-    const placeDoc = await Place.create({
-      owner: user.id,
-      title,
-      address,
-      description,
-      perks,
-      extraInfo,
-      checkIn,
-      checkOut,
-      maxGuests,
-      addedPhotos
-    })
-    res.json(placeDoc)
-  })
-})
+// To get user's uploded places. Something is not working.
+// app.get("/places", (req, res) => {
+//   const { token } = req.cookies;
+//   jwt.verify(token, jwtSecret, {}, async (err, user) => {
+//     if (err) throw err;
+//     const { id } = user;
+//     res.json(await Place.find({ owner: id }));
+//   });
+// });
 
 app.use(router);
 
