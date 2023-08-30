@@ -70,7 +70,7 @@ const LoginForm = ({
 
   async function loginUser(ev) {
     ev.preventDefault();
-    console.log("🚀 ~ loginValid:", loginValid);
+    // console.log("🚀 ~ loginValid:", loginValid);
     if (loginValid) {
       try {
         const { data } = await axios.post(
