@@ -9,9 +9,9 @@ const UserPlaces = () => {
 
   useEffect(() => {
     axios
-      .get("/places", { withCredentials: true })
+      .get("/user-places", { withCredentials: true })
       .then(({ data }) => {
-        console.log(data); // Check the value of data
+        // console.log(data); // Check the value of data
         setPlaces(data);
       })
       .catch((error) => {
@@ -44,12 +44,12 @@ const UserPlaces = () => {
         </Link>
       </div>
 
-      <div className="mt-4 flex justify-center">
+      <div className="mt-4 w-full grid justify-items-center gap-y-5">
         {places.length > 0 &&
           places.map((place) => (
             <Link to={'/account/places/'+place._id}
               key={place.id}
-              className="flex cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl w-max"
+              className="flex cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl max-w-5xl"
             >
               <div className="flex w-32 h-32 bg-gray-300 shrink-0">
                 {place.photos.length > 0 && (
