@@ -1,11 +1,11 @@
-import PlacesForm from "../components/placesForm/PlacesForm";
+import UserPlaces from "../components/userPlaces/UserPlaces";
 
 const PlacesPage = () => {
-
   return (
     <div>
-      <PlacesForm/>
+      <UserPlaces />
     </div>
   );
 };
+
 export default PlacesPage;
