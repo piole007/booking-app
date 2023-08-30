@@ -1,9 +1,10 @@
 import React from 'react'
+import ListOfPlaces from '../components/listOfPlaces/ListOfPlaces'
 
 const IndexPage = () => {
     return (
         <div>
-            IndexPage here
+            <ListOfPlaces/>
         </div>
     )
 }

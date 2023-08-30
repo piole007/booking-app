@@ -59,7 +59,7 @@ router.post("/login", async (req, res) => {
         (err, token) => {
           if (err) throw err;
           res.cookie("token", token).json(UserDoc);
-          console.log(UserDoc);
+          // console.log(UserDoc);
         }
       );
     } else {
@@ -95,7 +95,7 @@ router.post("/places", (req, res) => {
     checkIn,
     checkOut,
     maxGuests,
-    addedPhotos } = req.body
+    addedPhotos, price } = req.body
   jwt.verify(token, jwtSecret, {}, async (err, user) => {
     if (err) throw err;
     const placeDoc = await Place.create({
@@ -108,7 +108,7 @@ router.post("/places", (req, res) => {
       checkIn,
       checkOut,
       maxGuests,
-      photos: addedPhotos
+      photos: addedPhotos, price
     })
     res.json(placeDoc)
   })
@@ -125,7 +125,6 @@ router.post("/upload-by-link", async (req, res) => {
   res.json(newName);
 });
 
-
 //To upload a photo from pc
 const photosMiddleware = multer({ dest: "uploads/" });
 
@@ -133,7 +132,7 @@ router.post("/upload", photosMiddleware.array("photos", 100), (req, res) => {
   const uploadedFiles = [];
   for (let i = 0; i < req.files.length; i++) {
     const { path, originalname } = req.files[i];
-    console.log(path);
+    // console.log(path);
     const parts = originalname.split(".");
     const ext = parts[parts.length - 1];
     const newPath = path + "." + ext;
@@ -144,7 +143,7 @@ router.post("/upload", photosMiddleware.array("photos", 100), (req, res) => {
 });
 
 // To get user's uploded places. Something is not working.
-router.get("/places", (req, res) => {
+router.get("/user-places", (req, res) => {
   const { token } = req.cookies;
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
     if (err) throw err;
@@ -162,7 +161,9 @@ router.get('/places/:id', async (req, res) => {
 //to update existing info of place in db
 router.put('/places', async (req, res) => {
   const { token } = req.cookies;
-  const { id, title,
+  const {
+    id,
+    title,
     address,
     description,
     perks,
@@ -170,13 +171,14 @@ router.put('/places', async (req, res) => {
     checkIn,
     checkOut,
     maxGuests,
-    addedPhotos } = req.body
+    addedPhotos, price } = req.body
 
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
     const placeDoc = await Place.findById(id)
     if (userData.id === placeDoc.owner.toString()) {
       placeDoc.set({
-        id, title,
+        id,
+        title,
         address,
         description,
         perks,
@@ -184,7 +186,8 @@ router.put('/places', async (req, res) => {
         checkIn,
         checkOut,
         maxGuests,
-        photos: addedPhotos
+        photos: addedPhotos,
+        price
       })
       await placeDoc.save()
       res.json('ok')
@@ -192,8 +195,13 @@ router.put('/places', async (req, res) => {
   })
 })
 
-router.post("/logout", (req, res) => {
+router.get('/places', async (req, res) => {
+  res.json(await Place.find())
+})
+
+router.get("/logout", (req, res) => {
   res.clearCookie("token").json(true);
+  // console.log();
 });
 
 //for every rout
@@ -202,7 +210,7 @@ router.get("*", (req, res) => {
   res.send("You accessed the node server");
 });
 
-//to test if api works
+//to test if server works
 router.get("/test", (req, res) => {
   res.json("test ok");
 });

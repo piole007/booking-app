@@ -14,6 +14,7 @@ const PlacesForm = () => {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
+  const [price, setPrice] = useState(50)
   const [addedPhotos, setAddedPhotos] = useState([1]);
   const [redirect, setRedirect] = useState(false);
   const { id } = useParams();
@@ -33,6 +34,7 @@ const PlacesForm = () => {
       setCheckIn(data.checkIn);
       setCheckOut(data.checkOut);
       setMaxGuests(data.maxGuests);
+      setPrice(data.price)
     });
   }, [id]);
   const inputHeader = (text) => <h2>{text}</h2>;
@@ -60,6 +62,7 @@ const PlacesForm = () => {
       checkOut,
       maxGuests,
       addedPhotos,
+      price
     };
     if (id) {
       await axios.put(
@@ -94,7 +97,6 @@ const PlacesForm = () => {
           onChange={(ev) => setTitle(ev.target.value)}
           placeholder="title, for example: My cozy apartment"
           className="title"
-          required
         />
         {preInput("Address", "address of the accommodations")}
         <input
@@ -105,6 +107,7 @@ const PlacesForm = () => {
           className="address"
         />
         {preInput("Photos", "the more photos the better")}
+        
         <PhotosUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />
 
         {preInput("Description", "description of the place")}
@@ -128,7 +131,7 @@ const PlacesForm = () => {
           "Check-in & Check-out times",
           "add check-in and check-out times, remember to have some time window for cleaning between guests."
         )}
-        <div className="grid gap-2 sm:grid-cols-3">
+        <div className="grid gap-2 grid-cols-2 md:grid-4">
           <div>
             <h3 className="mt-2 -mb-1">Check-in time</h3>
             <input
@@ -136,6 +139,7 @@ const PlacesForm = () => {
               onChange={(ev) => setCheckIn(ev.target.value)}
               placeholder="15"
               type="number"
+              className="checkin"
             />
           </div>
           <div>
@@ -145,6 +149,7 @@ const PlacesForm = () => {
               onChange={(ev) => setCheckOut(ev.target.value)}
               placeholder="12"
               type="number"
+              className="checkout"
             />
           </div>
           <div>
@@ -153,6 +158,16 @@ const PlacesForm = () => {
               value={maxGuests}
               onChange={(ev) => setMaxGuests(ev.target.value)}
               type="number"
+              className="guest"
+            />
+          </div>
+          <div>
+            <h3 className="mt-2 -mb-1">Price per night</h3>
+            <input
+              value={price}
+              onChange={(ev) => setPrice(ev.target.value)}
+              type="number"
+              className="price"
             />
           </div>
         </div>

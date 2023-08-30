@@ -2,10 +2,14 @@ input.text,
 input.number,
 input.title,
 input.address,
-input.photos {
+input.photos,
+input.checkout,
+input.checkin,
+input.guest,
+input.price {
   @apply w-full border my-1 py-2 px-3 rounded-2xl;
 }
 
 textarea {
-  height: 150px
+  height: 150px;
 }
