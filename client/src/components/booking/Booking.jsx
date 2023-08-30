@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { differenceInCalendarDays } from "date-fns";
+import { Navigate } from "react-router-dom";
+import axios from "axios";
 
 const Booking = ({ place }) => {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guestNumber, setGuestNumber] = useState(1);
-  const [name, setName] = useState('');
-  const [mobile, setMobile] = useState('')
+  const [name, setName] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [redirect, setRedirect] = useState("");
 
   let lengthOfStay = 0;
 
@@ -15,6 +18,28 @@ const Booking = ({ place }) => {
       new Date(checkOut),
       new Date(checkIn)
     );
+  }
+
+  async function bookThisPlace() {
+    const response = await axios.post(
+      "/bookings",
+      {
+        checkIn,
+        checkOut,
+        guestNumber,
+        name,
+        mobile,
+        place: place._id,
+        price: lengthOfStay * place.price,
+      },
+      { withCredentials: true }
+    );
+    const bookingId = response.data._id;
+    setRedirect("/account/bookings/" + bookingId);
+  }
+
+  if (redirect) {
+    return <Navigate to={redirect} />;
   }
 
   return (
@@ -64,15 +89,28 @@ const Booking = ({ place }) => {
           )}
           {lengthOfStay > 0 && (
             <div className="py-2 px-4 border-t">
-                <label>Your full name:</label>
-              <input type="text" className="text" placeholder="Chris Harmmer" />
+              <label>Your full name:</label>
+              <input
+                type="text"
+                className="text"
+                value={name}
+                onChange={(ev) => setName(ev.target.value)}
+                placeholder="Chris Harmmer"
+              />
               <label>Your phone number:</label>
-              <input type="number" className="number" placeholder="+44..." />
+              <input
+                type="tel"
+                className="number"
+                value={mobile}
+                onChange={(ev) => setMobile(ev.target.value)}
+                placeholder="+44..."
+              />
             </div>
-            
           )}
         </div>
-        <button className="primary mt-2">Book this place</button>
+        <button onClick={bookThisPlace} className="primary mt-2">
+          Book this place
+        </button>
       </div>
     </div>
   );
