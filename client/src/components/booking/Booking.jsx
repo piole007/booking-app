@@ -34,8 +34,8 @@ const Booking = ({ place }) => {
       },
       { withCredentials: true }
     );
-    const bookingId = response.data._id;
-    setRedirect("/account/bookings/" + bookingId);
+    
+    setRedirect("/account/bookings/");
   }
 
   if (redirect) {

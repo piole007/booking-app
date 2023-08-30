@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import AccountNav from "../accountNav/AccountNav";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import PlaceImg from "../../placeImg/PlaceImg";
 
 const UserPlaces = () => {
   const [places, setPlaces] = useState([]);
@@ -52,9 +53,7 @@ const UserPlaces = () => {
               className="flex cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl max-w-5xl"
             >
               <div className="flex w-32 h-32 bg-gray-300 shrink-0">
-                {place.photos.length > 0 && (
-                  <img className="object-cover" src={'http://localhost:4000/uploads/' + place.photos[0]} alt="" />
-                )}
+               <PlaceImg place={place}/>
               </div>
               <div className="grow-0 ">
                 <h2 className="text-xl">{place.title}</h2>

@@ -1,9 +1,13 @@
-import AccountNav from "../components/accountNav/AccountNav"
+import AccountNav from "../components/accountNav/AccountNav";
+import UserBookings from "../components/userBookings/UserBookings";
 
 const BookingsPage = () => {
   return (
-    <div><AccountNav /></div>
-  )
-}
+    <div>
+      <AccountNav />
+      <UserBookings/>
+    </div>
+  );
+};
 
-export default BookingsPage
+export default BookingsPage;

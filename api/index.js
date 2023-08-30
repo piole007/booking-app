@@ -11,6 +11,7 @@ const multer = require("multer");
 const fs = require("fs");
 const Place = require("./models/Place");
 const BookingModel = require("./models/Booking");
+const { error } = require("console");
 
 const app = new express();
 const bcryptSalt = bcrypt.genSaltSync(10);
@@ -29,6 +30,15 @@ app.use(
 mongoose.connect(process.env.MONGO_URL);
 
 var router = express.Router();
+
+function getUserDataFromToken(req) {
+  return new Promise((resolve, reject) => {
+    jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
+      if (err) reject(err)
+      resolve(userData);
+    })
+  })
+}
 
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
@@ -204,15 +214,23 @@ router.get("/logout", (req, res) => {
   res.clearCookie("token").json(true);
 });
 
-router.post('/bookings', (req, res) => {
+//creating new booking
+router.post('/bookings', async (req, res) => {
+  const userData = await getUserDataFromToken(req)
   const { place, checkIn, checkOut, guestNumber, name, mobile, price } = req.body;
   BookingModel.create({
-    place, checkIn, checkOut, guestNumber, name, mobile, price
+    place, checkIn, checkOut, guestNumber, name, mobile, price, user: userData.id
   }).then((doc) => {
     res.json(doc);
   }).catch((err) => {
     throw err;
   })
+})
+
+//getting existing bookings
+router.get('/bookings', async (req, res) => {
+  const userData = await getUserDataFromToken(req);
+  res.json(await BookingModel.find({ user: userData.id }).populate('place'))
 })
 
 //for every rout
