@@ -37,6 +37,7 @@ const PlacesForm = () => {
       setPrice(data.price);
     });
   }, [id]);
+
   const inputHeader = (text) => <h2>{text}</h2>;
 
   const inputDescription = (text) => (
@@ -51,33 +52,48 @@ const PlacesForm = () => {
     </div>
   );
 
+  const validateForm = () => {
+    if (!title || !address || !description || !maxGuests || !price) {
+      alert("Please fill in all required fields.");
+      return false;
+    }
+    return true;
+  };
+
   const savePlace = async (ev) => {
-    ev.preventDefault();
-    const placeData = {
-      title,
-      address,
-      description,
-      perks,
-      extraInfo,
-      checkIn,
-      checkOut,
-      maxGuests,
-      addedPhotos,
-      price,
-    };
-    if (id) {
-      await axios.put(
-        "/places",
-        {
-          id,
-          ...placeData,
-        },
-        { withCredentials: true }
-      );
-      setRedirect(true);
-    } else {
-      await axios.post("/places", placeData, { withCredentials: true });
-      setRedirect(true);
+    try {
+      ev.preventDefault();
+      if (!validateForm()) {
+        return;
+      }
+      const placeData = {
+        title,
+        address,
+        description,
+        perks,
+        extraInfo,
+        checkIn,
+        checkOut,
+        maxGuests,
+        addedPhotos,
+        price,
+      };
+      if (id) {
+        await axios.put(
+          "/places",
+          {
+            id,
+            ...placeData,
+          },
+          { withCredentials: true }
+        );
+        setRedirect(true);
+      } else {
+        await axios.post("/places", placeData, { withCredentials: true });
+        setRedirect(true);
+      }
+    } catch (error) {
+      console.error("Error saving place:", error);
     }
   };
 
