@@ -20,7 +20,7 @@ const Profile = () => {
   }
 
   async function logout() {
-    await axios.get("/logout", { withCredentials: true });
+    await axios.post("/logout", { withCredentials: true });
     setRedirect("/");
     setUser(null);
   }

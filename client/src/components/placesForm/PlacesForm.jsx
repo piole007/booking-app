@@ -1,8 +1,9 @@
-import React, { Navigate, useState } from "react";
+import { useEffect, useState } from "react";
 import PhotosUploader from "../photosUploader/PhotosUploader";
 import Perks from "../perks/Perks";
 import axios from "axios";
 import "./PlacesForm.css";
+import { Navigate, useParams } from "react-router-dom";
 
 const PlacesForm = () => {
   const [title, setTitle] = useState("");
@@ -15,7 +16,25 @@ const PlacesForm = () => {
   const [maxGuests, setMaxGuests] = useState(1);
   const [addedPhotos, setAddedPhotos] = useState([1]);
   const [redirect, setRedirect] = useState(false);
+  const { id } = useParams();
 
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+    axios.get("/places/" + id).then((response) => {
+      const { data } = response;
+      setTitle(data.title);
+      setAddress(data.address);
+      setAddedPhotos(data.photos);
+      setDescription(data.description);
+      setPerks(data.perks);
+      setExtraInfo(data.extraInfo);
+      setCheckIn(data.checkIn);
+      setCheckOut(data.checkOut);
+      setMaxGuests(data.maxGuests);
+    });
+  }, [id]);
   const inputHeader = (text) => <h2>{text}</h2>;
 
   const inputDescription = (text) => (
@@ -29,24 +48,33 @@ const PlacesForm = () => {
     </div>
   );
 
-  const addNewPlace = async (ev) => {
+  const savePlace = async (ev) => {
     ev.preventDefault();
-    await axios.post(
-      "/places",
-      {
-        title,
-        address,
-        description,
-        perks,
-        extraInfo,
-        checkIn,
-        checkOut,
-        maxGuests,
-        addedPhotos,
-      },
-      { withCredentials: true }
-    );
-    setRedirect(true);
+    const placeData = {
+      title,
+      address,
+      description,
+      perks,
+      extraInfo,
+      checkIn,
+      checkOut,
+      maxGuests,
+      addedPhotos,
+    };
+    if (id) {
+      await axios.put(
+        "/places",
+        {
+          id,
+          ...placeData,
+        },
+        { withCredentials: true }
+      );
+      setRedirect(true);
+    } else {
+      await axios.post("/places", placeData, { withCredentials: true });
+      setRedirect(true);
+    }
   };
 
   if (redirect) {
@@ -55,7 +83,7 @@ const PlacesForm = () => {
 
   return (
     <div>
-      <form onSubmit={addNewPlace}>
+      <form onSubmit={savePlace}>
         {preInput(
           "Title",
           "title for your place. Should be short and descriptive."
@@ -66,6 +94,7 @@ const PlacesForm = () => {
           onChange={(ev) => setTitle(ev.target.value)}
           placeholder="title, for example: My cozy apartment"
           className="title"
+          required
         />
         {preInput("Address", "address of the accommodations")}
         <input

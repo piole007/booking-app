@@ -8,7 +8,7 @@ export function UserContextProvider({ children }) {
   const [ready, setReady] = useState(false);
   useEffect(() => {
     if (!user) {
-      axios.post("/profile", { withCredentials: true }).then(({ data }) => {
+      axios.get("/profile", { withCredentials: true }).then(({ data }) => {
         setUser(data);
         setReady(true);
       });

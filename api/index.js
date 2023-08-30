@@ -70,7 +70,8 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/profile", async (req, res) => {
+//to get token for account
+router.get("/profile", async (req, res) => {
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, user) => {
@@ -83,24 +84,38 @@ router.post("/profile", async (req, res) => {
   }
 });
 
-router.get("/logout", (req, res) => {
-  res.clearCookie("token").json(true);
-});
+//to post a new place
+router.post("/places", (req, res) => {
+  const { token } = req.cookies;
+  const { title,
+    address,
+    description,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+    addedPhotos } = req.body
+  jwt.verify(token, jwtSecret, {}, async (err, user) => {
+    if (err) throw err;
+    const placeDoc = await Place.create({
+      owner: user.id,
+      title,
+      address,
+      description,
+      perks,
+      extraInfo,
+      checkIn,
+      checkOut,
+      maxGuests,
+      photos: addedPhotos
+    })
+    res.json(placeDoc)
+  })
+})
 
-router.get("/logout", (req, res) => {
-  res.clearCookie("token").json(true);
-});
-
-router.get("/test", (req, res) => {
-  res.json("test ok");
-});
-
-router.get("*", (req, res) => {
-  console.log("response was sent to the browser");
-  res.send("You accessed the node server");
-});
-
-app.post("/upload-by-link", async (req, res) => {
+//to upload photos by link
+router.post("/upload-by-link", async (req, res) => {
   const { link } = req.body;
   const newName = "photo" + Date.now() + ".jpg";
   await imageDownloader.image({
@@ -110,8 +125,11 @@ app.post("/upload-by-link", async (req, res) => {
   res.json(newName);
 });
 
+
+//To upload a photo from pc
 const photosMiddleware = multer({ dest: "uploads/" });
-app.post("/upload", photosMiddleware.array("photos", 100), (req, res) => {
+
+router.post("/upload", photosMiddleware.array("photos", 100), (req, res) => {
   const uploadedFiles = [];
   for (let i = 0; i < req.files.length; i++) {
     const { path, originalname } = req.files[i];
@@ -120,20 +138,74 @@ app.post("/upload", photosMiddleware.array("photos", 100), (req, res) => {
     const ext = parts[parts.length - 1];
     const newPath = path + "." + ext;
     fs.renameSync(path, newPath);
-    uploadedFiles.push(newPath.replace("uploads\\", "")); //this part can be different for you, it can be uploads/, don't know why it's like this for me
+    uploadedFiles.push(newPath.replace("uploads\\", ""));
   }
   res.json(uploadedFiles);
 });
 
 // To get user's uploded places. Something is not working.
-// app.get("/places", (req, res) => {
-//   const { token } = req.cookies;
-//   jwt.verify(token, jwtSecret, {}, async (err, user) => {
-//     if (err) throw err;
-//     const { id } = user;
-//     res.json(await Place.find({ owner: id }));
-//   });
-// });
+router.get("/places", (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err;
+    const { id } = userData;
+    res.json(await Place.find({ owner: id }));
+  });
+});
+
+//to get existing info of place form db
+router.get('/places/:id', async (req, res) => {
+  const { id } = req.params
+  res.json(await Place.findById(id))
+})
+
+//to update existing info of place in db
+router.put('/places', async (req, res) => {
+  const { token } = req.cookies;
+  const { id, title,
+    address,
+    description,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+    addedPhotos } = req.body
+
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    const placeDoc = await Place.findById(id)
+    if (userData.id === placeDoc.owner.toString()) {
+      placeDoc.set({
+        id, title,
+        address,
+        description,
+        perks,
+        extraInfo,
+        checkIn,
+        checkOut,
+        maxGuests,
+        photos: addedPhotos
+      })
+      await placeDoc.save()
+      res.json('ok')
+    }
+  })
+})
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("token").json(true);
+});
+
+//for every rout
+router.get("*", (req, res) => {
+  console.log("response was sent to the browser");
+  res.send("You accessed the node server");
+});
+
+//to test if api works
+router.get("/test", (req, res) => {
+  res.json("test ok");
+});
 
 app.use(router);
 
