@@ -1,26 +1,23 @@
-export const nameValidator = (name) => {
-  if (!name) {
-    return ("Name is required");
-  } else if (name.length <= 3) {
+export const nameValidator = (name, setError) => {
+  if (name.length <= 3 && name.length > 0) {
+    setError(true);
     return "Your name should be longer";
   }
   return "";
 };
 
-export const emailValidator = (email) => {
-  if (!email) {
-    return ("Email is required");
-  } else if (!new RegExp(/\S+@\S+\.\S+/).test(email)) {
-    return ("Incorrect email format");
+export const emailValidator = (email, setError) => {
+  if (!new RegExp(/\S+@\S+\.\S+/).test(email) && email.length > 0) {
+    setError(true);
+    return "Incorrect email format";
   }
   return "";
 };
 
-export const passwordValidator = (password) => {
-  if (!password) {
-    return ("Password is required");
-  } else if (password.length < 8) {
-    return ("Password musth have minimum 8 characters");
+export const passwordValidator = (password, setError) => {
+  if (password.length < 8 && password.length > 0) {
+    setError(true);
+    return "Password musth have minimum 8 characters";
   }
   return "";
 };

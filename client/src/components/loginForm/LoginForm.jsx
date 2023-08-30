@@ -26,15 +26,15 @@ const LoginForm = ({
   const { setUser } = useContext(UserContext);
   const [formIsValid, setFrormIsValid] = useState(false);
   const [loginValid, setLoginValid] = useState(false);
-  const [nameError, setNameError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const [nameError, setNameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
   const [popupInfoText, setPopupInfoText] = useState("");
 
   useEffect(() => {
-    const nameError = nameValidator(name);
-    const emailError = emailValidator(email);
-    const passwordError = passwordValidator(password);
+    const nameError = nameValidator(name, setNameError);
+    const emailError = emailValidator(email, setEmailError);
+    const passwordError = passwordValidator(password, setPasswordError);
 
     setNameError(nameError);
     setEmailError(emailError);
@@ -70,6 +70,7 @@ const LoginForm = ({
 
   async function loginUser(ev) {
     ev.preventDefault();
+    console.log("🚀 ~ loginValid:", loginValid);
     if (loginValid) {
       try {
         const { data } = await axios.post(
@@ -85,6 +86,8 @@ const LoginForm = ({
       } catch (error) {
         setPopupInfoText("Login not succesful");
       }
+    } else {
+      setPopupInfoText("Login not succesful");
     }
   }
 
@@ -123,7 +126,7 @@ const LoginForm = ({
           value={email}
           onChange={(ev) => setEmail(ev.target.value)}
         />
-        {showNameInput && <div className="error">{emailError}</div>}
+        {<div className="error">{emailError}</div>}
 
         <input
           className="password"
@@ -132,7 +135,7 @@ const LoginForm = ({
           value={password}
           onChange={(ev) => setPassword(ev.target.value)}
         />
-        {showNameInput && <div className="error">{passwordError}</div>}
+        {<div className="error">{passwordError}</div>}
         <PopupWindow text={btnText} popupInfo={popupInfoText} />
         <div className="text-center py-2 text-gray-500">
           {questionText}{" "}
