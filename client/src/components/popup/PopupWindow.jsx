@@ -7,7 +7,8 @@ const PopupWindow = ({ text, popupInfo }) => {
   const closeModal = () => setOpen(false);
   return (
     <div>
-      <button type="submit"
+      <button
+        type="submit"
         className="bg-primary p-2 m-2 w-full text-white rounded-2xl"
         onClick={() => setOpen((o) => !o)}
       >
