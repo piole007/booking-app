@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import PlaceImg from "../../placeImg/PlaceImg";
 import { differenceInCalendarDays, format } from "date-fns";
-import { Link } from "react-router-dom";
 
 const UserBookings = () => {
   const [userBookings, setUserBookings] = useState([]);
@@ -15,7 +14,7 @@ const UserBookings = () => {
     <div>
       {userBookings?.length > 0 ? (
         userBookings.map((booking) => (
-          <Link to={'/account/bookings/' + booking._id}
+          <div
             key={booking.id}
             className="flex gap-4 bg-gray-200 rounded-2xl overflow-hidden mb-2"
           >
@@ -70,7 +69,7 @@ const UserBookings = () => {
               </div>
               <div className="text-xl">Total price: {booking.price}€</div>
             </div>
-          </Link>
+          </div>
         ))
       ) : (
         <div>No bookings found</div>

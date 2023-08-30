@@ -70,7 +70,6 @@ const LoginForm = ({
 
   async function loginUser(ev) {
     ev.preventDefault();
-    // console.log("🚀 ~ loginValid:", loginValid);
     if (loginValid) {
       try {
         const { data } = await axios.post(
@@ -82,7 +81,7 @@ const LoginForm = ({
         setEmail("");
         setPassword("");
         setPopupInfoText("Login succsesful");
-        setRedirect(true);
+        // setTimeout(setRedirect(true), 50000)
       } catch (error) {
         setPopupInfoText("Login not succesful");
       }
@@ -91,13 +90,11 @@ const LoginForm = ({
     }
   }
 
-  if (redirect) {
-    return <Navigate to={"/"} />;
-  }
 
-  // const getOnSubmit = () => {
-  //   showNameInput ? registerUser : null
-  // };
+  // if (redirect) {
+  //   return <Navigate to={"/"} />;
+  // }
+
 
   return (
     <div className="mb-64 w-screen">
