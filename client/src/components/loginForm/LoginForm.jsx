@@ -9,6 +9,7 @@ import {
   passwordValidator,
 } from "./validators/Validators";
 import { useEffect } from "react";
+import PopupWindow from "../popup/PopupWindow";
 
 const LoginForm = ({
   questionText,
@@ -24,9 +25,11 @@ const LoginForm = ({
   const [redirect, setRedirect] = useState(false);
   const { setUser } = useContext(UserContext);
   const [formIsValid, setFrormIsValid] = useState(false);
+  const [loginValid, setLoginValid] = useState(false);
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [popupInfoText, setPopupInfoText] = useState("");
 
   useEffect(() => {
     const nameError = nameValidator(name);
@@ -40,6 +43,12 @@ const LoginForm = ({
     setFrormIsValid(!nameError & !emailError & !passwordError);
   }, [email, name, password]);
 
+  useEffect(() => {
+    if (email.length > 0 && password.length > 0) {
+      setLoginValid(true);
+    }
+  }, [email, password]);
+
   async function registerUser(ev) {
     ev.preventDefault();
     if (formIsValid) {
@@ -49,26 +58,33 @@ const LoginForm = ({
           email,
           password,
         });
+        setName("");
+        setEmail("");
+        setPassword("");
+        setPopupInfoText("Registration successful. Now you can log in.");
       } catch (error) {
-        alert("Registration failed. Please try again later");
+        setPopupInfoText("Registration wasn't succesful");
       }
-      alert("Registration successful. Now you can log in");
     }
   }
 
   async function loginUser(ev) {
     ev.preventDefault();
-    try {
-      const { data } = await axios.post(
-        "/login",
-        { email, password },
-        { withCredentials: true }
-      );
-      setUser(data);
-      alert("Login successful");
-      setRedirect(true);
-    } catch (error) {
-      alert("Login failed");
+    if (loginValid) {
+      try {
+        const { data } = await axios.post(
+          "/login",
+          { email, password },
+          { withCredentials: true }
+        );
+        setUser(data);
+        setEmail("");
+        setPassword("");
+        setPopupInfoText("Login succsesful");
+        setRedirect(true);
+      } catch (error) {
+        setPopupInfoText("Login not succesful");
+      }
     }
   }
 
@@ -117,9 +133,7 @@ const LoginForm = ({
           onChange={(ev) => setPassword(ev.target.value)}
         />
         {showNameInput && <div className="error">{passwordError}</div>}
-        
-
-        <button className="login">{btnText}</button>
+        <PopupWindow text={btnText} popupInfo={popupInfoText} />
         <div className="text-center py-2 text-gray-500">
           {questionText}{" "}
           <Link className="underline text-black" to={rout}>
