@@ -14,7 +14,7 @@ const PlacesForm = () => {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
-  const [price, setPrice] = useState(50)
+  const [price, setPrice] = useState(50);
   const [addedPhotos, setAddedPhotos] = useState([1]);
   const [redirect, setRedirect] = useState(false);
   const { id } = useParams();
@@ -34,7 +34,7 @@ const PlacesForm = () => {
       setCheckIn(data.checkIn);
       setCheckOut(data.checkOut);
       setMaxGuests(data.maxGuests);
-      setPrice(data.price)
+      setPrice(data.price);
     });
   }, [id]);
   const inputHeader = (text) => <h2>{text}</h2>;
@@ -43,10 +43,11 @@ const PlacesForm = () => {
     <p className="text-gray-500 text-sm">{text}</p>
   );
 
-  const preInput = (header, description) => (
+  const preInput = (header, description, isRequired = false) => (
     <div>
       {inputHeader(header)}
       {inputDescription(description)}
+      {isRequired && <span className="required-asterisk">* required</span>}
     </div>
   );
 
@@ -62,7 +63,7 @@ const PlacesForm = () => {
       checkOut,
       maxGuests,
       addedPhotos,
-      price
+      price,
     };
     if (id) {
       await axios.put(
@@ -89,7 +90,8 @@ const PlacesForm = () => {
       <form onSubmit={savePlace}>
         {preInput(
           "Title",
-          "title for your place. Should be short and descriptive."
+          "title for your place. Should be short and descriptive.",
+          true
         )}
         <input
           type="text"
@@ -98,7 +100,7 @@ const PlacesForm = () => {
           placeholder="title, for example: My cozy apartment"
           className="title"
         />
-        {preInput("Address", "address of the accommodations")}
+        {preInput("Address", "address of the accommodations", true)}
         <input
           type="text"
           value={address}
@@ -107,10 +109,10 @@ const PlacesForm = () => {
           className="address"
         />
         {preInput("Photos", "the more photos the better")}
-        
+
         <PhotosUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />
 
-        {preInput("Description", "description of the place")}
+        {preInput("Description", "description of the place", true)}
         <textarea
           value={description}
           onChange={(ev) => setDescription(ev.target.value)}
@@ -134,6 +136,7 @@ const PlacesForm = () => {
         <div className="grid gap-2 grid-cols-2 md:grid-4">
           <div>
             <h3 className="mt-2 -mb-1">Check-in time</h3>
+            <p className="required-asterisk">* required</p>
             <input
               value={checkIn}
               onChange={(ev) => setCheckIn(ev.target.value)}
@@ -144,6 +147,7 @@ const PlacesForm = () => {
           </div>
           <div>
             <h3 className="mt-2 -mb-1">Check-out time</h3>
+            <p className="required-asterisk">* required</p>
             <input
               value={checkOut}
               onChange={(ev) => setCheckOut(ev.target.value)}
@@ -154,20 +158,24 @@ const PlacesForm = () => {
           </div>
           <div>
             <h3 className="mt-2 -mb-1">Max number guests</h3>
+            <p className="required-asterisk">* required</p>
             <input
               value={maxGuests}
               onChange={(ev) => setMaxGuests(ev.target.value)}
               type="number"
               className="guest"
+              required
             />
           </div>
           <div>
             <h3 className="mt-2 -mb-1">Price per night</h3>
+            <p className="required-asterisk">* required</p>
             <input
               value={price}
               onChange={(ev) => setPrice(ev.target.value)}
               type="number"
               className="price"
+              required
             />
           </div>
         </div>

@@ -13,3 +13,7 @@ input.price {
 textarea {
   height: 150px;
 }
+
+.required-asterisk {
+  color: red;
+}
