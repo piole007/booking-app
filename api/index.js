@@ -10,6 +10,7 @@ const imageDownloader = require("image-downloader");
 const multer = require("multer");
 const fs = require("fs");
 const Place = require("./models/Place");
+const BookingModel = require("./models/Booking");
 
 const app = new express();
 const bcryptSalt = bcrypt.genSaltSync(10);
@@ -201,8 +202,18 @@ router.get('/places', async (req, res) => {
 
 router.get("/logout", (req, res) => {
   res.clearCookie("token").json(true);
-  // console.log();
 });
+
+router.post('/bookings', (req, res) => {
+  const { place, checkIn, checkOut, guestNumber, name, mobile, price } = req.body;
+  BookingModel.create({
+    place, checkIn, checkOut, guestNumber, name, mobile, price
+  }).then((doc) => {
+    res.json(doc);
+  }).catch((err) => {
+    throw err;
+  })
+})
 
 //for every rout
 router.get("*", (req, res) => {
