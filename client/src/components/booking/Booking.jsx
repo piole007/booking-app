@@ -21,7 +21,7 @@ const Booking = ({ place }) => {
   }
 
   async function bookThisPlace() {
-    const response = await axios.post(
+    await axios.post(
       "/bookings",
       {
         checkIn,
@@ -34,7 +34,7 @@ const Booking = ({ place }) => {
       },
       { withCredentials: true }
     );
-    
+
     setRedirect("/account/bookings/");
   }
 

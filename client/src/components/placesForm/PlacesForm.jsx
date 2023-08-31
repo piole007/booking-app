@@ -105,7 +105,7 @@ const PlacesForm = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-gray-100 rounded-lg">
-      <div className="max-w-5xl w-full py-8 bg-white rounded-lg shadow-lg my-7 px-5">
+      <div className="max-w-5xl w-full py-8 bg-white rounded-lg shadow-lg my-4 px-5">
         <form onSubmit={savePlace}>
           {preInput(
             "Title",
