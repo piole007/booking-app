@@ -23,6 +23,7 @@ Booking App is a full-stack web application developed as a final project for the
 - cors
 - jsonwebtoken
 - multer
+- nodemon
 
 ## Features
 
@@ -42,6 +43,7 @@ npm start
 ### Backend
 cd api
 npm install
+npm install nodemon
 npm start
 
 ## Usage
