@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import "./LoginForm.css";
 import axios from "axios";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { UserContext } from "../userContext/UserContext";
 import {
   emailValidator,
@@ -22,7 +22,7 @@ const LoginForm = ({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [redirect, setRedirect] = useState(false);
+  // const [redirect, setRedirect] = useState(false);
   const { setUser } = useContext(UserContext);
   const [formIsValid, setFrormIsValid] = useState(false);
   const [loginValid, setLoginValid] = useState(false);
@@ -90,11 +90,9 @@ const LoginForm = ({
     }
   }
 
-
   // if (redirect) {
   //   return <Navigate to={"/"} />;
   // }
-
 
   return (
     <div className="mb-64 w-screen">

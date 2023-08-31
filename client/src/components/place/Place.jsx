@@ -21,7 +21,7 @@ const Place = () => {
   if (allPhotos) {
     return (
       <div className="absolute inset-0 bg-white">
-        <div className="pt-6 px-20 grid gap-4">
+        <div className="pt-6 px-20 grid gap-4 flex justify-center items-center">
           <div>
             <h2 className="text-3xl">Photos of {place.title}</h2>
             <button
@@ -163,8 +163,8 @@ const Place = () => {
           <Booking place={place} />
         </div>
       </div>
-      <div className="bg-white -mx-8 px-8 mt-2 py-6 border-t">
-        <h2 className="mt-4 font-semibold text-2xl">Extra info</h2>
+      <div className="bg-white -mx-8 px-8 mt-2 py-6 border-t mb-6 ">
+        <h2 className="mt-4 font-semibold text-2xl ">Extra info</h2>
         <p className="mt-4 text-xm text-gray-500 leading-4">
           {place.extraInfo}
         </p>
