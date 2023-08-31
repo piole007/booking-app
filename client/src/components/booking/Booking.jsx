@@ -10,6 +10,7 @@ const Booking = ({ place }) => {
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [redirect, setRedirect] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   let lengthOfStay = 0;
 
@@ -19,6 +20,16 @@ const Booking = ({ place }) => {
       new Date(checkIn)
     );
   }
+
+  const handleGuestNumberChange = (event) => {
+    const newGuestNumber = parseInt(event.target.value, 10);
+    setGuestNumber(newGuestNumber);
+    if (newGuestNumber > place.maxGuests) {
+      setErrorMsg(`Maximum ${place.maxGuests} guests allowed.`);
+    } else {
+      setErrorMsg("");
+    }
+  };
 
   async function bookThisPlace() {
     await axios.post(
@@ -74,8 +85,9 @@ const Booking = ({ place }) => {
               type="number"
               placeholder="1"
               value={guestNumber}
-              onChange={(ev) => setGuestNumber(ev.target.value)}
+              onChange={handleGuestNumberChange}
             />
+            {errorMsg && <p className="text-red-500">{errorMsg}</p>}
           </div>
           {lengthOfStay > 0 && (
             <div className="text-center pb-4 text-2xl">
