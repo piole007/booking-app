@@ -44,7 +44,7 @@ npm start
 cd api
 npm install
 npm install nodemon
-npm start
+nodemon index.js
 
 ## Usage
 
